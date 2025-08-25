@@ -1,0 +1,403 @@
+L0_0 = GameMain
+L0_0 = L0_0.GetMod
+L0_0 = L0_0(L0_0, "_LogicMode")
+L0_0 = L0_0.CreateMode
+L0_0 = L0_0(L0_0, "CaiXiaChatSelect")
+L0_0.Mode = nil
+L0_0.NpcType = nil
+L0_0.TipTopInfo = nil
+L0_0.TargetUser = nil
+L0_0.StorageID = nil
+xlua.private_accessible(CS.Wnd_TipPopPanel)
+function string.split(A0_1, A1_2)
+  local L2_3
+  L2_3 = {}
+  string.gsub(A0_1, "[^" .. A1_2 .. "]+", function(A0_4)
+    table.insert(L2_3, A0_4)
+  end)
+  return L2_3
+end
+function L0_0.OnModeEnter(A0_5, A1_6)
+  local L2_7
+  L2_7 = A1_6[1]
+  L2_7 = L2_7 or "SendItem"
+  L0_0.Mode = L2_7
+  L2_7 = L0_0.Mode
+  if L2_7 == "SendNpc" then
+    L2_7 = A0_5.SetHeadMsg
+    L2_7(A0_5, "请选择一个内门弟子")
+    L2_7 = A0_5.SetKeyCondition
+    L2_7(A0_5, "Npc")
+    L2_7 = A0_5.SetCheckMsg
+    L2_7(A0_5, "你要派遣哪个弟子呢？")
+    L2_7 = A0_5.OpenThingCheck
+    L2_7(A0_5)
+    L0_0.TipTopInfo = nil
+    return
+  end
+  L2_7 = L0_0.Mode
+  if L2_7 == "CloudItem" then
+    L2_7 = A1_6[2]
+    L0_0.StorageID = tostring(L2_7)
+  end
+  L2_7 = A0_5.SetHeadMsg
+  L2_7(A0_5, "请选择一件物品")
+  L2_7 = A0_5.SetKeyCondition
+  L2_7(A0_5, "Item")
+  L2_7 = A0_5.OpenThingCheck
+  L2_7(A0_5)
+  L0_0.TipTopInfo = nil
+end
+function L0_0.CheckThing(A0_8, A1_9)
+  local L2_10
+  L2_10 = CS
+  L2_10 = L2_10.GameMain
+  L2_10 = L2_10.Instance
+  L2_10 = L2_10.FightMap
+  if L2_10 then
+    L2_10 = A0_8.SetHeadMsg
+    L2_10(A0_8, "不允许在别人的门派使用该功能！")
+    L2_10 = false
+    return L2_10
+  end
+  L2_10 = L0_0.Mode
+  if L2_10 == "SendNpc" then
+    L2_10 = A0_8.GetMap
+    L2_10 = L2_10(A0_8)
+    L2_10 = L2_10.Things
+    L2_10 = L2_10.GetThingAtGrid
+    L2_10 = L2_10(L2_10, A1_9, g_emThingType.Npc)
+    if not L2_10 then
+      return false
+    end
+    return L0_0:CheckNpc(L2_10)
+  end
+  L2_10 = A0_8.GetMap
+  L2_10 = L2_10(A0_8)
+  L2_10 = L2_10.Things
+  L2_10 = L2_10.GetThingAtGrid
+  L2_10 = L2_10(L2_10, A1_9, g_emThingType.Item)
+  if L2_10.InWhoseBag ~= 0 then
+    return false
+  end
+  if L2_10.FreeCount ~= L2_10.Count then
+    return false
+  end
+  if L2_10.FromMod ~= nil then
+    A0_8:SetHeadMsg("这是一件MOD物品\n来源：" .. L2_10.FromMod)
+    return true
+  end
+  if L2_10 ~= nil and 0 < L2_10.FreeCount then
+    A0_8:SetHeadMsg("请选择一件物品")
+    return true
+  end
+  return false
+end
+function L0_0.OnModeLevel(A0_11)
+  CaiXiaChatWindow:Show()
+end
+function L0_0.CheckNpc(A0_12, A1_13)
+  local L2_14
+  L2_14 = true
+  if not A1_13.IsPlayerThing or A1_13.IsPuppet or A1_13.IsCorpse or A1_13.IsZombie or A1_13:HasSpecialFlag(CS.XiaWorld.g_emNpcSpecailFlag.FLAG_CANTSELECT) then
+    L2_14 = false
+  elseif not A1_13.IsDisciple or A1_13:HasSpecialFlag(CS.XiaWorld.g_emNpcSpecailFlag.FLAG_ISVISTOR) then
+    L2_14 = false
+  elseif A1_13.IsLingShou then
+    L2_14 = false
+  end
+  return L2_14
+end
+function L0_0.Apply(A0_15, A1_16)
+  local L2_17, L3_18
+  L2_17 = CS
+  L2_17 = L2_17.System
+  L2_17 = L2_17.DateTime
+  L2_17 = L2_17.Now
+  L3_18 = L2_17
+  L2_17 = L2_17.ToFileTime
+  L2_17 = L2_17(L3_18)
+  A0_15.time = L2_17
+  L2_17 = GameMain
+  L3_18 = L2_17
+  L2_17 = L2_17.GetMod
+  L2_17 = L2_17(L3_18, "XWebSocket")
+  L2_17 = L2_17.ws
+  if L2_17 == nil then
+    L2_17 = CS
+    L2_17 = L2_17.Wnd_Message
+    L2_17 = L2_17.Show
+    L3_18 = nil
+    L2_17(L3_18, 1, nil, true, "出错啦！", 0, 0, "没有连接服务器！")
+    return
+  end
+  L2_17 = L0_0.Mode
+  if L2_17 == "SendNpc" then
+    L3_18 = A0_15
+    L2_17 = A0_15.GetMap
+    L2_17 = L2_17(L3_18)
+    L2_17 = L2_17.Things
+    L3_18 = L2_17
+    L2_17 = L2_17.GetThingAtGrid
+    L2_17 = L2_17(L3_18, A1_16, g_emThingType.Npc)
+    L3_18 = L2_17.IsDisciple
+    if not L3_18 then
+      L3_18 = CaiXiaChat
+      L3_18 = L3_18.MsgBox
+      L3_18(L3_18, "无法发送外门弟子！", "出错啦！")
+      return
+    end
+    L3_18 = CS
+    L3_18 = L3_18.Wnd_Message
+    L3_18 = L3_18.Show
+    L3_18(nil, 2, function(A0_19)
+      if A0_19 == "1" then
+        L0_0:SendNpc(L2_17)
+        CaiXiaChatWindow:Show()
+      end
+      CaiXiaChatWindow:Show()
+    end, true, "发送Npc", 0, 0, "确定将 " .. L2_17:GetName() .. " 发送到聊天群里吗？这可是一条不归路哦！")
+    return
+  else
+  end
+  L3_18 = A0_15
+  L2_17 = A0_15.GetMap
+  L2_17 = L2_17(L3_18)
+  L2_17 = L2_17.Things
+  L3_18 = L2_17
+  L2_17 = L2_17.GetThingAtGrid
+  L2_17 = L2_17(L3_18, A1_16, g_emThingType.Item)
+  L3_18 = CS
+  L3_18 = L3_18.Wnd_TipPopPanel
+  L3_18 = L3_18.Instance
+  if L3_18.thing ~= L2_17 then
+    L3_18.thing = L2_17
+  end
+  L3_18:UpdateData()
+  L0_0.TipTopInfo = CS.CaiXiaChat.CaiXiaChat.SafeSerializeTipTop(L3_18)
+  if L0_0.TipTopInfo == null then
+    CaiXiaChat:MsgBox("出错啦！\n无法获取物品信息！\n请重试！", "错误")
+    return
+  end
+  if L0_0.Mode == "SendItem" then
+    L0_0:CheckSendItem(L2_17)
+  elseif L0_0.Mode == "TradeItem" then
+    L0_0:CheckTradeItem(L2_17)
+  elseif L0_0.Mode == "CloudItem" then
+    L0_0:CheckCloudItem(L2_17)
+  end
+  CaiXiaChat:Print(string.format("[CaiXiaChat]耗时:%sms", (CS.System.DateTime.Now:ToFileTime() - A0_15.time) / 10000))
+end
+function L0_0.CheckSendItem(A0_20, A1_21)
+  if A1_21.FromMod ~= nil then
+    CS.Wnd_Message.Show(nil, 2, function(A0_22)
+      if A0_22 == "1" then
+        L0_0:SendItem(A1_21)
+        CaiXiaChatWindow:Show()
+      end
+      CaiXiaChatWindow:Show()
+    end, true, "发送物品", 0, 0, "此物品检测为MOD物品！\n确定将 " .. A1_21:GetName() .. " 发送到聊天群里吗？")
+  else
+    CS.Wnd_Message.Show(nil, 2, function(A0_23)
+      if A0_23 == "1" then
+        L0_0:SendItem(A1_21)
+        CaiXiaChatWindow:Show()
+      end
+      CaiXiaChatWindow:Show()
+    end, true, "发送物品", 0, 0, "确定将 " .. A1_21:GetName() .. " 发送到聊天群里吗？\n手续费为：1修仙币")
+  end
+end
+function L0_0.SendItem(A0_24, A1_25)
+  local L2_26, L3_27, L4_28, L5_29, L6_30
+  L2_26 = CaiXiaChatWindow
+  L3_27 = L2_26
+  L2_26 = L2_26.UpdateChatText
+  L4_28 = "系统"
+  L5_29 = "你向大家发送了一个新的物品["
+  L6_30 = A1_25.GetName
+  L6_30 = L6_30(A1_25)
+  L5_29 = L5_29 .. L6_30 .. "]"
+  L2_26(L3_27, L4_28, L5_29)
+  L2_26 = CS
+  L2_26 = L2_26.Newtonsoft
+  L2_26 = L2_26.Json
+  L2_26 = L2_26.JsonConvert
+  L2_26 = L2_26.SerializeObject
+  L3_27 = A1_25
+  L4_28 = CS
+  L4_28 = L4_28.GameWatch
+  L4_28 = L4_28.JsonSetting
+  L2_26 = L2_26(L3_27, L4_28)
+  L3_27 = "{}"
+  L4_28 = L0_0.TipTopInfo
+  if L4_28 ~= nil then
+    L3_27 = L0_0.TipTopInfo
+  end
+  L4_28 = "null"
+  L5_29 = A1_25.FromMod
+  if L5_29 then
+    L5_29 = string
+    L5_29 = L5_29.format
+    L6_30 = "\"%s\""
+    L5_29 = L5_29(L6_30, string.split(A1_25.FromMod, "|")[1])
+    L4_28 = L5_29
+  end
+  L5_29 = A1_25.def
+  L5_29 = L5_29.Name
+  L6_30 = A1_25.IsFaBao
+  if L6_30 then
+    L6_30 = A1_25.Fabao
+    L6_30 = L6_30.OitemDef
+    L5_29 = L6_30.Name
+  end
+  L6_30 = string
+  L6_30 = L6_30.format
+  L6_30 = L6_30("{\"itemname\":\"%s\",\"itemdata\":%s,\"TipTopInfo\":%s,\"FromMod\":%s,\"ThingDef\":\"%s\"}", CaiXiaChat:TextFix(A1_25:GetName()), L2_26, L3_27, L4_28, L5_29)
+  GameMain:GetMod("CaiXiaChat"):SendMsg2("ItemThing", L6_30)
+  ThingMgr:RemoveThing(A1_25, true, false)
+end
+function L0_0.CheckTradeItem(A0_31, A1_32)
+  if A1_32.FromMod ~= nil then
+    CS.Wnd_Message.Show(nil, 2, function(A0_33)
+      if A0_33 == "1" then
+        CaiXiaChatNewTradeWindow.ItemData = A1_32
+        CaiXiaChatNewTradeWindow:Show()
+      end
+    end, true, "修仙聊天群", 0, 0, "此物品被鉴定为MOD物品！\n确定将 " .. A1_32:GetName() .. " 发到聊天群吗？！")
+  else
+    CaiXiaChatNewTradeWindow.ItemData = A1_32
+    CaiXiaChatNewTradeWindow:Show()
+  end
+end
+function L0_0.CheckCloudItem(A0_34, A1_35)
+  local L2_36, L3_37, L4_38, L5_39, L6_40, L7_41, L8_42
+  L2_36 = CS
+  L2_36 = L2_36.Newtonsoft
+  L2_36 = L2_36.Json
+  L2_36 = L2_36.JsonConvert
+  L2_36 = L2_36.SerializeObject
+  L3_37 = A1_35
+  L4_38 = CS
+  L4_38 = L4_38.GameWatch
+  L4_38 = L4_38.JsonSetting
+  L2_36 = L2_36(L3_37, L4_38)
+  L3_37 = "{}"
+  L4_38 = L0_0.TipTopInfo
+  if L4_38 ~= nil then
+    L3_37 = L0_0.TipTopInfo
+  end
+  L4_38 = "null"
+  L5_39 = A1_35.FromMod
+  if L5_39 then
+    L5_39 = string
+    L5_39 = L5_39.format
+    L6_40 = "\"%s\""
+    L7_41 = string
+    L7_41 = L7_41.split
+    L8_42 = A1_35.FromMod
+    L7_41 = L7_41(L8_42, "|")
+    L7_41 = L7_41[1]
+    L5_39 = L5_39(L6_40, L7_41)
+    L4_38 = L5_39
+  end
+  L5_39 = A1_35.def
+  L5_39 = L5_39.Name
+  L6_40 = A1_35.IsFaBao
+  if L6_40 then
+    L6_40 = A1_35.Fabao
+    L6_40 = L6_40.OitemDef
+    L5_39 = L6_40.Name
+  end
+  L6_40 = CS
+  L6_40 = L6_40.System
+  L6_40 = L6_40.Activator
+  L6_40 = L6_40.CreateInstance
+  L7_41 = CS
+  L7_41 = L7_41.System
+  L7_41 = L7_41.Type
+  L7_41 = L7_41.GetType
+  L8_42 = "CaiXiaChat.CloudStorageCommandData,CaiXiaChat"
+  L7_41 = L7_41(L8_42, true, true)
+  L8_42 = "AddItem"
+  L6_40 = L6_40(L7_41, L8_42)
+  L6_40.Command = "AddItem"
+  L7_41 = L0_0.StorageID
+  L7_41 = L7_41 or "0"
+  L6_40.TargetID = L7_41
+  L7_41 = string
+  L7_41 = L7_41.format
+  L8_42 = "{\"itemname\":\"%s\",\"itemdata\":%s,\"TipTopInfo\":%s,\"FromMod\":%s,\"ThingDef\":\"%s\"}"
+  L7_41 = L7_41(L8_42, CaiXiaChat:TextFix(A1_35:GetName()), L2_36, L3_37, L4_38, L5_39)
+  L6_40.Value = L7_41
+  L7_41 = CS
+  L7_41 = L7_41.System
+  L7_41 = L7_41.Activator
+  L7_41 = L7_41.CreateInstance
+  L8_42 = CS
+  L8_42 = L8_42.System
+  L8_42 = L8_42.Type
+  L8_42 = L8_42.GetType
+  L8_42 = L8_42("CaiXiaChat.CloudStorageCommand,CaiXiaChat", true, true)
+  L7_41 = L7_41(L8_42, L6_40)
+  L8_42 = CS
+  L8_42 = L8_42.Newtonsoft
+  L8_42 = L8_42.Json
+  L8_42 = L8_42.JsonConvert
+  L8_42 = L8_42.SerializeObject
+  L8_42 = L8_42(L7_41)
+  CS.CaiXiaChat.Client.Instance.ws:SendStringAsync(L8_42, nil)
+  CS.CaiXiaChat.Wnd_CloudStorage.Instance:Show()
+  ThingMgr:RemoveThing(A1_35, true, false)
+end
+function L0_0.SendNpc(A0_43, A1_44)
+  if L0_0:MakeNpcString(A1_44) then
+    ThingMgr:RemoveThing(A1_44, false, true)
+  end
+end
+function L0_0.SetTargetUser(A0_45, A1_46)
+  L0_0.TargetUser = A1_46
+end
+function L0_0.MakeNpcString(A0_47, A1_48)
+  local L2_49, L3_50, L4_51, L5_52, L6_53
+  L2_49 = xlua
+  L2_49 = L2_49.private_accessible
+  L2_49(L3_50)
+  L2_49 = xlua
+  L2_49 = L2_49.private_accessible
+  L2_49(L3_50)
+  L2_49 = A1_48.PropertyMgr
+  L2_49 = L2_49.m_lisModifiers
+  for L6_53, _FORV_7_ in L3_50(L4_51) do
+    if _FORV_7_.def.FromFeature or _FORV_7_.def.FromExperience then
+      if _FORV_7_.EnterNpcList then
+        _FORV_7_.EnterNpcList:Clear()
+      end
+      if _FORV_7_.lisGiveLables then
+        _FORV_7_.lisGiveLables:Clear()
+      end
+      if _FORV_7_.lisGetLables then
+        _FORV_7_.lisGetLables:Clear()
+      end
+    end
+  end
+  if L3_50 then
+    L3_50(L4_51)
+  end
+  A1_48.m_nWorkSpaceIndex = -1
+  A1_48.InBuilding = nil
+  if L4_51 == nil then
+    L6_53 = "出错了"
+    L4_51(L5_52, L6_53, "出错了")
+    return L4_51
+  end
+  L6_53 = L0_0.TargetUser
+  L6_53 = L4_51
+  L6_53 = CS
+  L6_53 = L6_53.System
+  L6_53 = L6_53.IO
+  L6_53 = L6_53.MemoryStream
+  L6_53 = L6_53()
+  CS.SevenZip.SevenZipHelper.Zip(L5_52, L6_53)
+  GameMain:GetMod("XWebSocket").ws:SendByte(L6_53:GetBuffer())
+  return true
+end

@@ -1,0 +1,50 @@
+﻿<ThingDefs><List>
+<ThingDef Type="Building" Name="Building_CaiXiaChat_TradeCenter" Parent="BuildingBase">
+	<TexPath>Spr\CaiXiaChat\CaiXiaChatTradeCenter3.png</TexPath>
+	<TexScale>1</TexScale>
+	<ThingName>修仙交易中心</ThingName>	
+	<Tags>
+	</Tags>
+	<ShadowSize>
+		<x>1</x>
+		<y>1.2</y>
+	</ShadowSize>
+	<ColliderKind>NoPass</ColliderKind>
+	<Collider>
+		<!--(0Empty 1Base) 2EmptyCenter 4EmptyWorkspace-->
+		<Data>
+		[1,1,1,1],
+		[1,1,3,1],
+		[1,1,1,1],
+		[1,1,1,1],
+		</Data>
+		<Offset>
+			<y>-0.3</y>
+			<x>-0.5</x>
+		</Offset>
+	</Collider>
+	
+	<Flammability>
+		<Flammability>0</Flammability>
+	</Flammability>
+	<Building>
+		<BeMade>
+			<WorkToMake>400</WorkToMake>
+			<Quality>0</Quality>
+			<StuffCategories>
+				<Stuff name = "MetalBlock"/>
+				<Stuff name = "RockBlock"/>
+			</StuffCategories>
+			<CostStuffCount>12</CostStuffCount>
+		</BeMade>
+		<SnowRenderData>
+			<x>2.90</x>
+			<y>3.60</y>
+			<z>1</z>
+		</SnowRenderData>		
+	</Building>
+	<StoryBnts>
+			<li Name="交易中心" Desc="进入交易中心。" Script=' CaiXiaChatTradeCenterWindow:Show();' Icon="res/Sprs/ui/icon_hand"/>
+	</StoryBnts>
+	</ThingDef>	
+</List></ThingDefs>

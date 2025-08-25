@@ -1,0 +1,62 @@
+<ThingDefs><List>	
+	<ThingDef Type="Item" Name="Item_ModTestItem">	
+		<ThingName>测试道具</ThingName>
+		<TexPath>Spr\Object\object_test.png</TexPath>	
+		<Desc>测试道具</Desc>
+		<MaxStack>1</MaxStack>
+		<Beauty>5</Beauty>
+		<Rate>1</Rate>
+		<ElementKind>Mu</ElementKind>
+		
+		<Flammability>
+			<Flammability>0.6</Flammability>
+			<FlameSpawnThingDef></FlameSpawnThingDef>
+			<FlameSpawnChance>0</FlameSpawnChance>
+			<BurningPoint>120</BurningPoint>
+		</Flammability>
+		
+		<Item Lable="Other">	
+			<FabaoSuffix>册,书,简,卷</FabaoSuffix>
+			<PhysicalLables>
+				<li>PhysicalLables_FaBaoFightPlus_Hard1</li>
+			</PhysicalLables>			
+		</Item>
+		<Ling>
+			<AddionLing>0</AddionLing>
+			<AddionRadius>1</AddionRadius>
+			<AddionFailing>0</AddionFailing>
+			<AddionFailRadius>0</AddionFailRadius>
+			
+			<Attenuation>0.05</Attenuation>
+			<Absorption>0.6</Absorption>
+			<Accommodate>40</Accommodate>
+		</Ling>
+	</ThingDef>	
+	
+	<ThingDef Type="Item" Name="Item_TestSword" Parent="Item_WeaponSword">	
+		<ThingName>测试_霜之哀伤</ThingName>
+		<TexPath>res\Sprs\object\object_weaponjian01</TexPath>
+		<ModScale>0.05</ModScale>
+		<Desc>测试道具</Desc>
+		<KeepModelColor>1</KeepModelColor><!--保持模型贴图颜色，不会受主材料影响-->
+		<Item Lable="Weapon">
+			<PhysicalLables>
+				<li>PhysicalLables_FightExtension_Hard_1</li>
+			</PhysicalLables>
+		</Item>
+		<FightExtension Type="PlayerOnly">
+			<Addons>
+				<li Type="Skill" Value="TestSkill"/>
+				<li Type="Magic" Value="TestMagic"/>
+			</Addons>
+			<SpecialLables>
+				<li Type="Hard" Value="1"/>
+				<li Type="Sharp" Value="1"/>
+			</SpecialLables>
+			<SpecialEffects>
+				<li Type="Modifier" Value="TestModifier"/>
+			</SpecialEffects>
+		</FightExtension>
+	</ThingDef>	
+	
+</List></ThingDefs>

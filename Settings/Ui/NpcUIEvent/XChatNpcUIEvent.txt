@@ -1,0 +1,7 @@
+﻿ID	Content	WholeContent	TipDesc	Desc	Type	TypeLevel	ImportanceLevel	IsShowNpcTips	RemoveType	WorldSpeed	SameType	LocationType	Icon
+	消息描述	同ID合并后描述	tips上显示的详细说明或进一步提示		事件类型（默认为空）	同类型事件等级（默认为0）	0提示 1信息 2警告（默认为0）	0不显示 1显示（默认为0）	0自动过期 1条件过期 2查看过期（默认为0）	0不处理 1暂停 2一档 3二挡 4三挡 （默认为0）	0SameR_DiffA  1Add  2Refresh（默认为0）	0None  1Happen  2Obj  3SelectObj（暂未使用）	
+12001	[聊天群]{0}发了一条聊天消息	[聊天群]收到了新的聊天消息					1		0		1		
+12002	[聊天群]{0}发了一件物品	[聊天群]收到了新的物品					1		0		1		
+12003	[聊天群]{0}来到了聊天群	[聊天群]有新的道友来到了聊天群					1		0		1		
+12004	[聊天群]{0}离开了聊天群	[聊天群]有道友离开了聊天群					1		0		1		
+12005	[聊天群]连接异常	[聊天群]连接异常					2		2		1		

@@ -1,0 +1,14 @@
+{
+    "AutoLogin": true,
+    "AutoStart": true,
+    "Debug": true,
+    "DefaultServer": "公益服",
+    "MiniChatAlpha": 100,
+    "MiniChatHeight": 1,
+    "MiniChatWidth": 1,
+    "ServerHost": "s5.v100.vip",
+    "ServerPort": "37667",
+    "UserName": "",
+    "PassWord": "",
+    "Version": "6.4"
+}

@@ -1,0 +1,13 @@
+{
+    "Lua.diagnostics.globals": [
+        "CS",
+        "GameMain",
+        "CaiXiaChatMiniGame2048",
+        "self",
+        "System",
+        "typeof"
+    ],
+    "Lua.diagnostics.disable": [
+        "undefined-global"
+    ]
+}

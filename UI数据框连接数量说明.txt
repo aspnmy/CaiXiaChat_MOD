@@ -1,0 +1,5 @@
+-- CaiXiaChatSettingWindow2 v6.09版本 于Sir登录框框架
+-- CaiXiaChatSettingWindow2 登陆对接是n10 用户名n8 登出对接是n6 密码是n9 手动添加n12 刷新服务器n17 自动启动n14 自动登录n13
+
+-- CaiXiaChatSettingWindow 我是院长的登陆框版本
+-- CaiXiaChatSettingWindow 登陆对接是n5 用户名n2 登出对接是n6 密码是n10 服务器地址n1 端口号n12 未知n13 自动启动n17 自动登陆n16 服务器状态n9 
