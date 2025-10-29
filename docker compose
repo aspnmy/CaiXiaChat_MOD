@@ -1,0 +1,31 @@
+services:
+  windows-win11:
+    image: dockurr/windows
+    container_name: windows-win11
+    environment:
+      VERSION: "11l"
+      DISK_SIZE: "30G"
+      RAM_SIZE: "8G"
+      CPU_CORES: "4"
+      LANGUAGE: "Chinese"
+      REGION: "en-US"
+      KEYBOARD: "en-US"
+      USERNAME: "username"
+      PASSWORD: "pwd"
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      # 7818是 xchat-server-v1.12的对外端口
+      - 7818:8181
+      - 7777:8006
+      - 7489:3389/tcp
+      - 7489:3389/udp
+    volumes:
+      - win11:/storage
+    restart: always
+    stop_grace_period: 2m
+volumes:
+  win11:
